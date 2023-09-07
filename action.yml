@@ -24,37 +24,11 @@ runs:
       run: echo "LANDO_VERSION=$(cat .github/lando_version.md)" >> $GITHUB_ENV
       shell: bash
 
-    - name: Cache Lando
-      id: cache-lando
-      uses: actions/cache@v3
-      with:
-        path: /usr/local/bin/lando
-        key: lando-${{ runner.os }}-${{ env.LANDO_VERSION }}
-
     - name: Install Lando
-      if: steps.cache-lando.outputs.cache-hit != 'true'
       run: |
         sudo curl -fsSL -o /usr/local/bin/lando "https://files.lando.dev/cli/lando-linux-x64-$LANDO_VERSION"
         sudo chmod +x /usr/local/bin/lando
       shell: bash
-
-    - name: Composer cache directory
-      run: echo "COMPOSER_DIR=$(composer config cache-dir)" >> $GITHUB_ENV
-      shell: bash
-
-    - name: Cache Composer dependencies
-      id: composer-cache
-      uses: actions/cache@v3
-      with:
-        path: "${{ env.COMPOSER_DIR }}"
-        key: composer-${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
-
-    - name: Cache Access theme
-      id: access-theme-cache
-      uses: actions/cache@v3
-      with:
-        path: "docroot/themes/custom/accesstheme"
-        key: access-theme-${{ runner.os }}-${{ hashFiles('docroot/themes/custom/accesstheme') }}
 
     - name: Composer install
       run: |
@@ -71,22 +45,6 @@ runs:
     - name: Todays date
       run: echo "DATE=$(date +%Y-%m-%d)" >> $GITHUB_ENV
       shell: bash
-
-    - name: Cache Files
-      id: drupal-files-cache
-      uses: actions/cache@v3
-      with:
-        path: |
-          web/sites/default/files
-          files-private
-        key: ${{ runner.os }}-${{ env.LAST_SUNDAY }}-files
-
-    - name: Daily db cache
-      id: drupal-db-cache
-      uses: actions/cache@v3
-      with:
-        path: backups
-        key: ${{ runner.os }}-${{ env.DATE }}-db
 
     - name: Spin up site
       run: |
