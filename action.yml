@@ -49,7 +49,6 @@ runs:
     - name: Spin up site
       run: |
         composer config -g github-oauth.github.com $gh_token_repo
-        gh repo list necyberteam
         vendor/bin/blt amp:landosetup $gh_token_repo 1
       shell: bash
       env:
