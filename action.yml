@@ -49,7 +49,16 @@ runs:
     - name: Spin up site
       run: |
         composer config -g github-oauth.github.com $gh_token_repo
-        vendor/bin/blt amp:landosetup $gh_token_repo 1
+        # Check for blt script in vendor/bin
+        if [ -x "vendor/bin/blt" ]; then
+          # blt script exists and is executable
+          echo "Running blt amp:landosetup..."
+          vendor/bin/blt amp:landosetup "$gh_token_repo" 1
+        else
+          # blt script not found, try composer
+          echo "Running composer robo landosetup..."
+          composer robo landosetup "$gh_token_repo" 1
+        fi
       shell: bash
       env:
         gh_token_repo: ${{ inputs.GH_TOKEN_REPO }}
