@@ -28,11 +28,9 @@ runs:
       run: |
         echo 'docker compose --compatibility "$@"' > /usr/local/bin/docker-compose
         chmod +x /usr/local/bin/docker-compose
-
-        echo '>>> Downloading lando from GitHub releases'
-        curl -fsSL -o lando.deb "https://github.com/lando/lando/releases/latest/download/lando-x64.deb"
-        sudo dpkg -i lando.deb
-        rm lando.deb
+        
+        echo "LANDO_VERSION=$(cat .github/lando_version.md)" >> $GITHUB_ENV
+        bash -c "$(curl -fsSL https://get.lando.dev/setup-lando.sh)"
       shell: bash
 
     - name: Composer install
